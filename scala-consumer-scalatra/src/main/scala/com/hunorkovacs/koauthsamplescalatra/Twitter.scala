@@ -16,11 +16,11 @@ import scala.concurrent.duration._
 
 class Twitter extends ScalatraServlet {
 
-  private val ConsumerKey = "TZO4QQGaFJBjXuKsyh8n1KrpE"
-  private val ConsumerSecret = "7t57qMb1unIyiZrRVuWwSwAQ6QXxcUtuRh98iqeHQSjfXtFsIx"
-  private val RequestTokenUrl = "https://api.twitter.com/oauth/request_token"
-  private val AuthorizeTokenUrl = "https://api.twitter.com/oauth/authorize"
-  private val AccessTokenUrl = "https://api.twitter.com/oauth/access_token"
+  private val ConsumerKey = "OmFjJKNqU4v791CWj6QKaBaiEep0WBxJ"
+  private val ConsumerSecret = "wr1KLYYH6o5yKFfiyN9ysKkPXcIAim2S"
+  private val RequestTokenUrl = "http://localhost:9000/oauth/request-token"
+  private val AuthorizeTokenUrl = "http://localhost:9000/oauth/authorize-with-password"
+  private val AccessTokenUrl = "http://localhost:9000/oauth/access-token"
 
   implicit private val system = ActorSystem()
   import system.dispatcher
@@ -38,7 +38,7 @@ class Twitter extends ScalatraServlet {
       parseRequestTokenResponse(response.entity.asString).right.get
     }
     token = Await.result(requestTokenResponseF, 4 seconds)
-    redirect(AuthorizeTokenUrl + "?" + TokenName + "=" + token.token)
+    redirect(AuthorizeTokenUrl + "?username=admin&password=admin&requestToken=" + token.token)
   }
 
   get("/accessToken") {
@@ -51,15 +51,15 @@ class Twitter extends ScalatraServlet {
       parseAccessTokenResponse(response.entity.asString).right.get
     }
     token = Await.result(accessTokenResponseF, 4 seconds)
-    redirect("/lastTweet")
+    redirect("/you")
   }
 
-  get("/lastTweet") {
-    val lastTweetUrl = "https://api.twitter.com/1.1/statuses/user_timeline.json?count=1&include_rts=1&trim_user=true"
-    val lastTweetResponseF = consumer.createOauthenticatedRequest(KoauthRequest("GET", lastTweetUrl, None),
+  get("/you") {
+    val url = "http://localhost:9000/me"
+    val responseF = consumer.createOauthenticatedRequest(KoauthRequest("GET", url, None),
         ConsumerKey, ConsumerSecret, token.token, token.secret) flatMap { requestWithInfo =>
-      pipeline(pipelining.Get(lastTweetUrl).withHeaders(RawHeader("Authorization", requestWithInfo.header)))
+      pipeline(pipelining.Get(url).withHeaders(RawHeader("Authorization", requestWithInfo.header)))
     }
-    Await.result(lastTweetResponseF, 4 seconds).entity.asString
+    Await.result(responseF, 4 seconds).entity.asString
   }
 }
