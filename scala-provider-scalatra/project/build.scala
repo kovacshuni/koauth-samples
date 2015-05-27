@@ -1,6 +1,8 @@
 import sbt._
 import Keys._
 import org.scalatra.sbt._
+import com.earldouglas.xsbtwebplugin.PluginKeys._
+import com.earldouglas.xsbtwebplugin.WebPlugin._
 
 object KoauthsamplescalaproviderscalatraBuild extends Build {
   val Organization = "com.hunorkovacs"
@@ -28,7 +30,8 @@ object KoauthsamplescalaproviderscalatraBuild extends Build {
         "io.spray" %% "spray-client" % "1.3.3",
         "com.typesafe.akka" %% "akka-actor" % "2.3.11",
         "com.hunorkovacs" %% "koauth" % "1.0.1-SNAPSHOT"
-      )
+      ),
+      port in container.Configuration := 9000
     )
   )
 }
