@@ -34,7 +34,7 @@ class Twitter extends ScalatraServlet {
           "http://127.0.0.1:8080/accessToken") flatMap { requestWithInfo =>
       pipeline(pipelining.Post(RequestTokenUrl).withHeaders(RawHeader("Authorization", requestWithInfo.header)))
     } map { response =>
-      System.out.println("Response: HTTP " + response.entity.asString)
+      System.out.println("Response: " + response.entity.asString)
       parseRequestTokenResponse(response.entity.asString).right.get
     }
     token = Await.result(requestTokenResponseF, 4 seconds)
@@ -47,7 +47,7 @@ class Twitter extends ScalatraServlet {
         params(VerifierName)) flatMap { requestWithInfo =>
       pipeline(pipelining.Post(AccessTokenUrl).withHeaders(RawHeader("Authorization", requestWithInfo.header)))
     } map { response =>
-      System.out.println("Response: HTTP " + response.entity.asString)
+      System.out.println("Response: " + response.entity.asString)
       parseAccessTokenResponse(response.entity.asString).right.get
     }
     token = Await.result(accessTokenResponseF, 4 seconds)
