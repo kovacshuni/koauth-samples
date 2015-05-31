@@ -24,6 +24,6 @@ should see your latest tweet as a result.
 
 [Twitter API](https://dev.twitter.com/rest/public)
 
-I'm using [koauth-sync](https://github.com/kovacshuni/koauth-sync) rather than koauth. It's just a wrapper that
-simplifies every API call, giving back results directly without Futures. It's better suited for Java and newbies
-who don't know [Akka](https://akka.io) yet.
+I'm using [koauth-sync](https://github.com/kovacshuni/koauth-sync) rather than [koauth](https://github.com/kovacshuni/koauth).
+It's just a wrapper that simplifies every API call, giving back results directly without Futures. It's better suited for Java
+and newbies who don't know [Akka](https://akka.io) yet.
