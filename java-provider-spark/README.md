@@ -1,41 +1,28 @@
-# KOAuth Sample for Java
+# KOAuth Sample Provider in Java
 
-Example application for how to use the [KOAuth](https://github.com/kovacshuni/koauth) library in Java.
+Example application for how to use the [KOAuth](https://github.com/kovacshuni/koauth) library as OAuth provider in Java.
+Creates a servlet. You can create/obtain tokens and, using them, make a protected API call.
 
 ## Quick:
 
 ```
-git clone https://github.com/kovacshuni/koauth-sample-java.git
-cd koauth-sample-java
+git clone https://github.com/kovacshuni/koauth-samples.git
+cd koauth-samples
 mvn clean install
 mvn exec:java
 ```
 
-Go to [http://127.0.0.1:4567/requestToken](http://127.0.0.1:4567/requestToken) and after a series of steps you
-should see your latest tweet as a result.
+## How to use
 
-## How it works:
+1. Request a new Request Token with an HTTP POST to http://127.0.0.1:4567/request-token
+2. Auhtorize your requested token with HTTP GET to http://127.0.0.1:4567/authorize-with-password?username=admin&password=admin&requestToken=yourrequesttokenobtainedatstep1
+3. Exchange your authorized request token to an access token by making an HTTP POST to http://127.0.0.1:4567/access-token
+4. Make a protected API call using your Access Token by making an HTTP GET to http://127.0.0.1:4567/me
 
-I chose the widely popular [Twitter API](https://dev.twitter.com/rest/public)
+As a result you should see the text: 'You are admin.'
 
-1. Requests a request token from the Twitter API
-2. Redirects you to Twitter's authorization page, where you have to autorize your key.
-3. Redirects you back to this app, exchanging your authorized request token to an access token.
-4. Redirects you to this apps endpoint which, using your new acces key, retrieves and displays your last tweet.
+If your don't sign it correctly or don't sign at all, you will be shown 'You are treated as a guest.', and an error message.
 
-I'm using [koauth-sync](https://github.com/kovacshuni/koauth-sync) rather than koauth, it's better suited for Java.
-Java 1.8 required.
-
-## Contributing
-
-Just create a pull-request, we'll discuss it, i'll try to be quick.
-
-## Owner
-
-Hunor Kovács  
-kovacshuni@yahoo.com  
-[hunorkovacs.com](http://www.hunorkovacs.com)
-
-## Licence
-
-Licensed under the [Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0) .
+I'm using [koauth-sync](https://github.com/kovacshuni/koauth-sync) rather than koauth. It's just a wrapper that
+simplifies every API call, giving back results directly without Futures. It's better suited for Java and newbies
+who don't know [Akka](https://akka.io) yet.
