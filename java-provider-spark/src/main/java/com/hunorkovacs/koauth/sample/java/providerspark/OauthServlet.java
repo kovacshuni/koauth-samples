@@ -14,6 +14,8 @@ import spark.Request;
 import spark.Response;
 import spark.Route;
 
+import javax.servlet.http.HttpServletResponse;
+
 import static spark.Spark.*;
 
 public class OauthServlet {
@@ -59,23 +61,22 @@ public class OauthServlet {
     }
 
     private class MeRoute implements Route {
-        public Object handle(Request request, spark.Response response) throws Exception {
+        public Object handle(Request request, Response response) throws Exception {
             KoauthRequest koauthRequest = requestMapper.map(request);
             Either<KoauthResponse, String> authentication = provider.oauthenticate(koauthRequest);
             if (authentication.isLeft()) {
                 KoauthResponse left = authentication.left().get();
                 if (left.getClass().equals(ResponseUnauthorized.class)) {
                     response.status(401);
-                    response.body("You are treated as a guest.\n" + ((ResponseUnauthorized) left).body());
+                    return "You are treated as a guest.\n" + ((ResponseUnauthorized) left).body();
                 } else {
                     response.status(400);
-                    response.body("You are treated as a guest.\n" + ((ResponseBadRequest) left).body());
+                    return "You are treated as a guest.\n" + ((ResponseBadRequest) left).body();
                 }
             } else {
                 String username = authentication.right().get();
-                response.body("You are " + username + ".");
+                return "You are " + username + ".";
             }
-            return response;
         }
     }
 

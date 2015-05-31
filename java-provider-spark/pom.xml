@@ -35,7 +35,7 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <mainClass>com.hunorkovacs.koauthsamplejava.Twitter</mainClass>
+                    <mainClass>com.hunorkovacs.koauth.sample.java.providerspark.OauthServlet</mainClass>
                 </configuration>
             </plugin>
         </plugins>
