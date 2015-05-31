@@ -14,8 +14,6 @@ import spark.Request;
 import spark.Response;
 import spark.Route;
 
-import javax.servlet.http.HttpServletResponse;
-
 import static spark.Spark.*;
 
 public class OauthServlet {
@@ -37,18 +35,18 @@ public class OauthServlet {
 
     private class AuthorizeRoute implements Route {
         public Object handle(Request request, spark.Response response) throws Exception {
-            String username = request.params("username");
-            if (username.equals("admin") && request.params("password").equals("admin")) {
-                String requestToken = request.params("requestToken");
+            String username = request.queryParams("username");
+            if (username.equals("admin") && request.queryParams("password").equals("admin")) {
+                String requestToken = request.queryParams("requestToken");
                 String verifier = DefaultTokenGenerator.generateVerifier();
                 persistence.authorizeRequestToken(requestToken, username, verifier);
                 Option<String> callbackUrl = persistence.getCallback(CONSUMER_KEY, requestToken);
                 response.redirect(callbackUrl.get() + "?" + OauthParams.VerifierName() + "=" + verifier);
+                return response;
             } else {
                 response.status(401);
-                response.body("Credentials or token not valid.");
+                return "Credentials or token not valid.";
             }
-            return response;
         }
     }
 
@@ -101,7 +99,7 @@ public class OauthServlet {
         }
     }
 
-    private class SparkResponseMapper implements ResponseMapper<spark.Response> {
+    private class SparkResponseMapper implements ResponseMapper<Object> {
 
         private Response response;
 
@@ -109,19 +107,18 @@ public class OauthServlet {
             this.response = response;
         }
 
-        public spark.Response map(KoauthResponse source) {
+        public Object map(KoauthResponse source) {
             if (source.getClass().equals(ResponseOk.class)) {
-                response.body(((ResponseOk) source).body());
+                return ((ResponseOk) source).body();
             } else {
                 if (source.getClass().equals(ResponseUnauthorized.class)) {
                     response.status(401);
-                    response.body(((ResponseUnauthorized) source).body());
+                    return ((ResponseUnauthorized) source).body();
                 } else {
                     response.status(400);
-                    response.body(((ResponseBadRequest) source).body());
+                    return ((ResponseBadRequest) source).body();
                 }
             }
-            return response;
         }
     }
 }
