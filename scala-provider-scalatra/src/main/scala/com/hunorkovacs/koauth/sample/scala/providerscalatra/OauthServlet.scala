@@ -107,7 +107,7 @@ class JavaxResponseMapper(private val ec: ExecutionContext) extends ResponseMapp
   }
 }
 
-class MyExampleMemoryPersistence(override val ec: ExecutionContext) extends ExampleMemoryPersistence(ec) {
+class MyExampleMemoryPersistence(ec: ExecutionContext) extends ExampleMemoryPersistence(ec) {
 
   implicit private val implicitEc = ec
 
@@ -116,7 +116,7 @@ class MyExampleMemoryPersistence(override val ec: ExecutionContext) extends Exam
       requestTokens.find(t => t.requestToken == requestToken) match {
         case None => Unit
         case Some(token) =>
-          requestTokens.indexOf(token)
+          requestTokens.remove(requestTokens.indexOf(token))
           requestTokens += RequestToken(MyExampleMemoryPersistence.ConsumerKey, token.requestToken,
             token.requestTokenSecret, "", Some(verifierUsername), Some(verifier))
           Unit
