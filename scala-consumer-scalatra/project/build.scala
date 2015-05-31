@@ -4,13 +4,13 @@ import org.scalatra.sbt._
 
 object KoauthsamplescalatraBuild extends Build {
   val Organization = "com.hunorkovacs"
-  val Name = "koauth-sample-scalatra"
+  val Name = "koauth-sample-scala-consumer-scalatra"
   val Version = "1.0.0-SNAPSHOT"
   val ScalaVersion = "2.11.6"
   val ScalatraVersion = "2.4.0.RC1"
 
   lazy val project = Project (
-    "koauth-sample-scalatra",
+    "koauth-sample-scala-consumer-scalatra",
     file("."),
     settings = ScalatraPlugin.scalatraWithJRebel ++ Seq(
       organization := Organization,

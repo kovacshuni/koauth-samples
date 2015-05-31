@@ -1,4 +1,4 @@
-package com.hunorkovacs.koauthsamplescalatra
+package com.hunorkovacs.koauth.sample.consumerscalatra
 
 import _root_.akka.actor.ActorSystem
 import com.hunorkovacs.koauth.domain.OauthParams._

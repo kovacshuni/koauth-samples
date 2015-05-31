@@ -1,4 +1,4 @@
-package com.hunorkovacs.koauthsamplejava;
+package com.hunorkovacs.koauth.sample.java.consumerspark;
 
 import com.hunorkovacs.koauth.domain.OauthParams;
 import com.hunorkovacs.koauth.domain.TokenResponse;
