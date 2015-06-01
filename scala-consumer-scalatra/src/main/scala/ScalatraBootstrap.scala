@@ -1,4 +1,4 @@
-import com.hunorkovacs.koauthsamplescalatra._
+import com.hunorkovacs.koauth.sample.scala.consumerscalatra._
 import org.scalatra._
 import javax.servlet.ServletContext
 

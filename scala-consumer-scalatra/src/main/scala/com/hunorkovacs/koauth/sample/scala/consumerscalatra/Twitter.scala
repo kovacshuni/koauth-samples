@@ -1,4 +1,4 @@
-package com.hunorkovacs.koauth.sample.consumerscalatra
+package com.hunorkovacs.koauth.sample.scala.consumerscalatra
 
 import _root_.akka.actor.ActorSystem
 import com.hunorkovacs.koauth.domain.OauthParams._
@@ -10,6 +10,8 @@ import spray.client.pipelining
 import spray.client.pipelining._
 import spray.http.HttpHeaders.RawHeader
 import spray.http._
+import spray.http.Rendering._
+
 
 import scala.concurrent.{Await, Future}
 import scala.concurrent.duration._
@@ -56,10 +58,17 @@ class Twitter extends ScalatraServlet {
 
   get("/lastTweet") {
     val lastTweetUrl = "https://api.twitter.com/1.1/statuses/user_timeline.json?count=1&include_rts=1&trim_user=true"
-    val lastTweetResponseF = consumer.createOauthenticatedRequest(KoauthRequest("GET", lastTweetUrl, None),
-        ConsumerKey, ConsumerSecret, token.token, token.secret) flatMap { requestWithInfo =>
-      pipeline(pipelining.Get(lastTweetUrl).withHeaders(RawHeader("Authorization", requestWithInfo.header)))
+    val responseF = sign(pipelining.Get(lastTweetUrl)).flatMap(pipeline(_))
+    Await.result(responseF, 4 seconds).entity.asString
+  }
+
+  private def sign(request: HttpRequest) = {
+    val body = request.headers
+      .find(h => h.name == "Content-Type" && h.value == "application/x-www-form-urlencoded")
+      .map(_ => request.entity.asString)
+    consumer.createOauthenticatedRequest(KoauthRequest(request.method.value, request.uri.toString(), None, body),
+        ConsumerKey, ConsumerSecret, token.token, token.secret) map { requestWithInfo =>
+      request.withHeaders(RawHeader("Authorization", requestWithInfo.header))
     }
-    Await.result(lastTweetResponseF, 4 seconds).entity.asString
   }
 }
