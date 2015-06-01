@@ -30,8 +30,7 @@ object KoauthsamplescalaproviderscalatraBuild extends Build {
         "io.spray" %% "spray-client" % "1.3.3",
         "com.typesafe.akka" %% "akka-actor" % "2.3.11",
         "com.hunorkovacs" %% "koauth" % "1.0.1-SNAPSHOT"
-      ),
-      port in container.Configuration := 9000
+      )
     )
   )
 }
