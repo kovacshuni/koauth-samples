@@ -35,7 +35,20 @@ public class Twitter {
 
     private class RequestTokenRoute implements Route {
         public Object handle(Request request, spark.Response response) throws Exception {
-            requestTokenResponse = obtainRequestToken();
+            Invocation.Builder builder = http.target(REQUEST_TOKEN_URL).request();
+            RequestWithInfo requestWithInfo = consumer.createRequestTokenRequest(KoauthRequest.apply("POST",
+                            REQUEST_TOKEN_URL, Option.<String>empty()),
+                    CONSUMER_KEY,
+                    CONSUMER_SECRET,
+                    "http://127.0.0.1:4567/accessToken");
+            Invocation invocation = builder.header("Authorization", requestWithInfo.header()).buildPost(Entity.text(""));
+
+            Response twResponse = invocation.invoke();
+
+            System.out.println("Response: HTTP " + twResponse.getStatus());
+            String body = twResponse.readEntity(String.class);
+            System.out.println(body);
+            requestTokenResponse = Arithmetics.parseRequestTokenResponse(body).right().get();
             response.redirect(AUTHORIZE_TOKEN_URL +
                     "?" + OauthParams.TokenName() + "=" + requestTokenResponse.token());
             return response;
@@ -44,9 +57,22 @@ public class Twitter {
 
     private class AccessTokenRoute implements Route {
         public Object handle(Request request, spark.Response response) throws Exception {
-            accessTokenResponse = exchangeForAccessToken(requestTokenResponse.token(),
+            Invocation.Builder builder = http.target(ACCESS_TOKEN_URL).request();
+            RequestWithInfo requestWithInfo = consumer.createAccessTokenRequest(KoauthRequest.apply("POST",
+                            ACCESS_TOKEN_URL, Option.<String>empty()),
+                    CONSUMER_KEY,
+                    CONSUMER_SECRET,
+                    requestTokenResponse.token(),
                     requestTokenResponse.secret(),
                     request.queryMap(OauthParams.VerifierName()).value());
+            Invocation invocation = builder.header("Authorization", requestWithInfo.header()).buildPost(Entity.text(""));
+
+            Response twResponse = invocation.invoke();
+
+            System.out.println("Response: HTTP " + twResponse.getStatus());
+            String body = twResponse.readEntity(String.class);
+            System.out.println(body);
+            accessTokenResponse =  Arithmetics.parseAccessTokenResponse(body).right().get();
             response.redirect("/lastTweet");
             return response;
         }
@@ -54,7 +80,22 @@ public class Twitter {
 
     private class LastTweetRoute implements Route {
         public Object handle(Request request, spark.Response response) throws Exception {
-            return obtainLastTweet(accessTokenResponse.token(), accessTokenResponse.secret());
+            String lastTweetUrl = "https://api.twitter.com/1.1/statuses/user_timeline.json?count=1&include_rts=1&trim_user=true";
+            Invocation.Builder builder = http.target(lastTweetUrl).request();
+            RequestWithInfo requestWithInfo = consumer.createOauthenticatedRequest(KoauthRequest.apply("GET",
+                            lastTweetUrl, Option.<String>empty()),
+                    CONSUMER_KEY,
+                    CONSUMER_SECRET,
+                    accessTokenResponse.token(),
+                    accessTokenResponse.secret());
+            Invocation invocation = builder.header("Authorization", requestWithInfo.header()).buildGet();
+
+            Response twResponse = invocation.invoke();
+
+            System.out.println("Response: HTTP " + twResponse.getStatus());
+            String body = twResponse.readEntity(String.class);
+            System.out.println(body);
+            return body;
         }
     }
 
@@ -63,60 +104,5 @@ public class Twitter {
         get("/requestToken", twitter.new RequestTokenRoute());
         get("/accessToken", twitter.new AccessTokenRoute());
         get("/lastTweet", twitter.new LastTweetRoute());
-    }
-
-    private TokenResponse obtainRequestToken() {
-        Invocation.Builder builder = http.target(REQUEST_TOKEN_URL).request();
-        RequestWithInfo requestWithInfo = consumer.createRequestTokenRequest(KoauthRequest.apply("POST",
-                        REQUEST_TOKEN_URL, Option.<String>empty()),
-                CONSUMER_KEY,
-                CONSUMER_SECRET,
-                "http://127.0.0.1:4567/accessToken");
-        Invocation invocation = builder.header("Authorization", requestWithInfo.header()).buildPost(Entity.text(""));
-
-        Response response = invocation.invoke();
-
-        System.out.println("Response: HTTP " + response.getStatus());
-        String body = response.readEntity(String.class);
-        System.out.println(body);
-        return Arithmetics.parseRequestTokenResponse(body).right().get();
-    }
-
-    private TokenResponse exchangeForAccessToken(String requestToken, String requestTokenSecret, String verifier) {
-        Invocation.Builder builder = http.target(ACCESS_TOKEN_URL).request();
-        RequestWithInfo requestWithInfo = consumer.createAccessTokenRequest(KoauthRequest.apply("POST",
-                        ACCESS_TOKEN_URL, Option.<String>empty()),
-                CONSUMER_KEY,
-                CONSUMER_SECRET,
-                requestToken,
-                requestTokenSecret,
-                verifier);
-        Invocation invocation = builder.header("Authorization", requestWithInfo.header()).buildPost(Entity.text(""));
-
-        Response response = invocation.invoke();
-
-        System.out.println("Response: HTTP " + response.getStatus());
-        String body = response.readEntity(String.class);
-        System.out.println(body);
-        return Arithmetics.parseAccessTokenResponse(body).right().get();
-    }
-
-    private String obtainLastTweet(String accessToken, String accessTokenSecret) {
-        String lastTweetUrl = "https://api.twitter.com/1.1/statuses/user_timeline.json?count=1&include_rts=1&trim_user=true";
-        Invocation.Builder builder = http.target(lastTweetUrl).request();
-        RequestWithInfo requestWithInfo = consumer.createOauthenticatedRequest(KoauthRequest.apply("GET",
-                        lastTweetUrl, Option.<String>empty()),
-                CONSUMER_KEY,
-                CONSUMER_SECRET,
-                accessToken,
-                accessTokenSecret);
-        Invocation invocation = builder.header("Authorization", requestWithInfo.header()).buildGet();
-
-        Response response = invocation.invoke();
-
-        System.out.println("Response: HTTP " + response.getStatus());
-        String body = response.readEntity(String.class);
-        System.out.println(body);
-        return body;
     }
 }
