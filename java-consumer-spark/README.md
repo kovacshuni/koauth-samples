@@ -7,7 +7,7 @@ Authenticates you in Twitter and displays your latest tweet.
 
 ```
 git clone https://github.com/kovacshuni/koauth-samples.git
-cd koauth-samples
+cd koauth-samples/java-consumer-spark
 mvn clean install
 mvn exec:java
 ```

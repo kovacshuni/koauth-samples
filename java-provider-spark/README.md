@@ -7,7 +7,7 @@ Creates a servlet. You can create/obtain tokens and, using them, make a protecte
 
 ```
 git clone https://github.com/kovacshuni/koauth-samples.git
-cd koauth-samples
+cd koauth-samples/java-provider-spark
 mvn clean install
 mvn exec:java
 ```
