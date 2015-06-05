@@ -7,7 +7,7 @@ import com.earldouglas.xsbtwebplugin.WebPlugin._
 object KoauthsamplescalaproviderscalatraBuild extends Build {
   val Organization = "com.hunorkovacs"
   val Name = "koauth-sample-scala-provider-scalatra"
-  val Version = "1.1.0"
+  val Version = "1.1.1-SNAPSHOT"
   val ScalaVersion = "2.11.6"
   val ScalatraVersion = "2.4.0.RC1"
 

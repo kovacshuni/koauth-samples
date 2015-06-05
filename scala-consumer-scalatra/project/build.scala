@@ -5,7 +5,7 @@ import org.scalatra.sbt._
 object KoauthsamplescalatraBuild extends Build {
   val Organization = "com.hunorkovacs"
   val Name = "koauth-sample-scala-consumer-scalatra"
-  val Version = "1.1.0"
+  val Version = "1.1.1-SNAPSHOT"
   val ScalaVersion = "2.11.6"
   val ScalatraVersion = "2.4.0.RC1"
 
