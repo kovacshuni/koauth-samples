@@ -3,7 +3,7 @@
 Example application for how to use the [KOAuth](https://github.com/kovacshuni/koauth) library as OAuth consumer in Scala.
 Authenticates you in Twitter and displays your latest tweet.
 
-See it acting right away [on Heroku!](koauth-sample-scala-consumer.herokuapp.com/requestToken)
+See it acting right away [on Heroku!](http://koauth-sample-scala-consumer.herokuapp.com/requestToken)
 
 ## Quick:
 
