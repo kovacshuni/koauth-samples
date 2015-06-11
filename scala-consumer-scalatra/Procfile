@@ -1,0 +1,1 @@
+web: target/universal/stage/bin/koauth-sample-scala-consumer-scalatra -Dhttp.port=$PORT

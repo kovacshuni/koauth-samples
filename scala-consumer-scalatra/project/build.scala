@@ -1,3 +1,4 @@
+import com.typesafe.sbt.packager.archetypes.JavaAppPackaging
 import sbt._
 import Keys._
 import org.scalatra.sbt._
@@ -10,7 +11,7 @@ object KoauthsamplescalatraBuild extends Build {
   val ScalatraVersion = "2.4.0.RC1"
 
   lazy val project = Project (
-    "koauth-sample-scala-consumer-scalatra",
+    Name,
     file("."),
     settings = ScalatraPlugin.scalatraWithJRebel ++ Seq(
       organization := Organization,
@@ -22,7 +23,7 @@ object KoauthsamplescalatraBuild extends Build {
       libraryDependencies ++= Seq(
         "org.scalatra" %% "scalatra" % ScalatraVersion,
         "ch.qos.logback" % "logback-classic" % "1.1.2" % "runtime",
-        "org.eclipse.jetty" % "jetty-webapp" % "9.1.5.v20140505" % "container",
+        "org.eclipse.jetty" % "jetty-webapp" % "9.1.5.v20140505" % "container;compile",
         "org.eclipse.jetty" % "jetty-plus" % "9.1.5.v20140505" % "container",
         "javax.servlet" % "javax.servlet-api" % "3.1.0",
         "io.spray" %% "spray-client" % "1.3.3",
@@ -30,5 +31,5 @@ object KoauthsamplescalatraBuild extends Build {
         "com.hunorkovacs" %% "koauth" % "1.1.0"
       )
     )
-  )
+  ).enablePlugins(JavaAppPackaging)
 }
